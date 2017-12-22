@@ -265,7 +265,7 @@ class HFImageManager: NSObject {
         }
         
     }
-    func getPhotoWithAsset(asset:PHAsset,completion:((UIImage,NSDictionary,Bool)->())?) -> Int32 {
+    func getPhotoWithAsset(asset:PHAsset,completion:((UIImage?,NSDictionary,Bool)->())?) -> Int32 {
         var fullScreenWidth = HFScreenWidth
         if fullScreenWidth > photoPreviewMaxWidth{
             fullScreenWidth = photoPreviewMaxWidth
@@ -277,7 +277,7 @@ class HFImageManager: NSObject {
         return self.getPhotoWithAsset(asset: asset, photoWidth: photoWidth, completion: completion, progressHandler: nil, networkAccessAllowed: true)
     }
     
-    func getPhotoWithAsset(asset:PHAsset,completion:((UIImage,NSDictionary,Bool)->())?,progressHandler:((Double,NSError,UnsafeMutablePointer<ObjCBool>,NSDictionary)->())?,networkAccessAllowed:Bool)-> Int32{
+    func getPhotoWithAsset(asset:PHAsset,completion:((UIImage?,NSDictionary?,Bool)->())?,progressHandler:((Double,NSError,UnsafeMutablePointer<ObjCBool>,NSDictionary)->())?,networkAccessAllowed:Bool)-> Int32{
         var fullScreenWidth = HFScreenWidth
         if fullScreenWidth > photoPreviewMaxWidth{
             fullScreenWidth = photoPreviewMaxWidth

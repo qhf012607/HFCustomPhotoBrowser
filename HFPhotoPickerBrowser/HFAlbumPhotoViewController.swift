@@ -49,7 +49,71 @@ class HFAlbumPhotoViewController: UIViewController,UICollectionViewDelegate,UICo
     }()
     
     @objc func surebutclick() {
+        let imagePickerVc : HFPhotoPickerController = self.navigationController as! HFPhotoPickerController
+        var photos = Array<AnyObject>()
+        var assets = Array<AnyObject>()
+        var infoArr = Array<AnyObject>()
+        for i in 0..<imagePickerVc.selectedModels!.count {
+            photos.append("1" as AnyObject)
+            assets.append("1" as AnyObject)
+            infoArr.append("1" as AnyObject)
+        }
+        for i in 0..<imagePickerVc.selectedModels!.count {
+            let model = imagePickerVc.selectedModels![i]
+            HFImageManager.manager.getPhotoWithAsset(asset: model.asset!, completion: { (photo, info, isdegraded) in
+//                if isdegraded{
+//                    return
+//                }
+                if photo != nil{
+                    photos[i] = photo!
+                }
+                if info != nil{
+                    infoArr[i] = info!
+                }
+                assets[i] = model.asset!
+                for item in photos{
+                    if item is String{
+                        return
+                    }
+                }
+                self.didGetAllPhotos(photos: photos, assets: assets, infoArr: infoArr)
+            }, progressHandler: { (progress, error, stop, info) in
+                
+            }, networkAccessAllowed: true)
+        }
+        if imagePickerVc.selectedModels!.count<=0 {
+            self.didGetAllPhotos(photos: photos, assets: assets, infoArr: infoArr)
+        }
+    }
+    
+    func didGetAllPhotos(photos:Array<AnyObject>,assets:Array<AnyObject>,infoArr:Array<AnyObject>) -> Void {
         
+         let imagePickerVc : HFPhotoPickerController = self.navigationController as!HFPhotoPickerController
+        if imagePickerVc.autoDismiss {
+            self.navigationController?.dismiss(animated: true, completion: {
+                self.callDelegateMethodWithPhotos(photos: photos as! Array<UIImage>, assets: assets as! Array<PHAsset>, infoArr: infoArr as! Array<NSDictionary>)
+            })
+        }else{
+            self.callDelegateMethodWithPhotos(photos: photos as! Array<UIImage>, assets: assets as! Array<PHAsset>, infoArr: infoArr as! Array<NSDictionary>)
+        }
+        
+    }
+    
+    func callDelegateMethodWithPhotos(photos:Array<UIImage>,assets:Array<PHAsset>,infoArr:Array<NSDictionary>) -> Void {
+        let imagePickerVc : HFPhotoPickerController = self.navigationController as!HFPhotoPickerController
+        if imagePickerVc.pickerDelegate != nil {
+            imagePickerVc.pickerDelegate?.imagePickerController(picker: imagePickerVc, didFinishPickingPhotos: photos, sourceAssets: assets, isSelectOriginalPhoto:true)
+        }
+    }
+    func scaleImage(image:UIImage,size:CGSize) -> UIImage {
+        if image.size.width < size.width {
+            return image
+        }
+        UIGraphicsBeginImageContext(size)
+        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        let newimage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return newimage
     }
     lazy var collectionView : HFCollectionView = {
         let collectionView = HFCollectionView(frame: CGRect.zero, collectionViewLayout: layout)

@@ -18,10 +18,15 @@ class ViewController: UIViewController ,HFImagePickerControllerDelegate{
         views.width = 100
         views.backgroundColor = UIColor.red
         view.addSubview(views)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(1*NSEC_PER_SEC))/Double(NSEC_PER_SEC)) {
+            self.pushPhoto()
+            //code
+            
+        }
         
     }
     override func viewDidAppear(_ animated: Bool) {
-        self.pushPhoto()
+      
     }
     func pushPhoto() {
         let vc = HFPhotoPickerController(maxImagesCount: 3, columnNumber: 4, delegate: self)
